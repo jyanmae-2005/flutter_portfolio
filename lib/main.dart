@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
     final appProvider = context.watch<AppProvider>();
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Portfolio',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
