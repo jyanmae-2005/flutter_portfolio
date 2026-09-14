@@ -38,7 +38,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Activity One'), findsOneWidget);
-    expect(find.text('Item A'), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
   });
 
   testWidgets('Navigate to Activity Screen 2', (WidgetTester tester) async {

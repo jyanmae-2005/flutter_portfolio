@@ -14,12 +14,7 @@ class ActivityScreen1 extends StatefulWidget {
 
 class _ActivityScreen1State extends State<ActivityScreen1> {
   int _selectedIndex = 0;
-  final List<String> _items = [
-    'Item A',
-    'Item B',
-    'Item C',
-    'Item D',
-  ];
+  final List<int> _items = [1, 2, 3, 4, 5];
 
   void _selectItem(int index) {
     setState(() {
@@ -49,7 +44,7 @@ class _ActivityScreen1State extends State<ActivityScreen1> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Pick an item',
+                'Pick a number',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
@@ -130,7 +125,7 @@ class _ActivityScreen1State extends State<ActivityScreen1> {
       itemBuilder: (context, index) {
         final isSelected = _selectedIndex == index;
         return CustomButton(
-          label: _items[index],
+          label: _items[index].toString(),
           icon: isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
           onPressed: () => _selectItem(index),
         );
