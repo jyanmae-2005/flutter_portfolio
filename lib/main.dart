@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/app_provider.dart';
+import 'providers/network_provider.dart';
 import 'screens/activity_screen1.dart';
 import 'screens/activity_screen2.dart';
 import 'screens/home_dashboard.dart';
+import 'screens/network_monitor.dart';
 import 'screens/settings_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider(create: (_) => NetworkProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -41,11 +46,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: appProvider.themeMode,
-      initialRoute: HomeDashboard.routeName,
+       initialRoute: HomeDashboard.routeName,
       routes: {
         HomeDashboard.routeName: (context) => const HomeDashboard(),
         ActivityScreen1.routeName: (context) => const ActivityScreen1(),
         ActivityScreen2.routeName: (context) => const ActivityScreen2(),
+        NetworkMonitor.routeName: (context) => const NetworkMonitor(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
       },
     );

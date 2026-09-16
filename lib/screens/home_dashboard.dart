@@ -5,6 +5,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/menu_card.dart';
 import 'activity_screen1.dart';
 import 'activity_screen2.dart';
+import 'network_monitor.dart';
 import 'settings_screen.dart';
 
 class HomeDashboard extends StatelessWidget {
@@ -98,6 +99,12 @@ class HomeDashboard extends StatelessWidget {
         subtitle: 'Explore the second activity',
         icon: Icons.school,
         route: ActivityScreen2.routeName,
+      ),
+      _MenuItemData(
+        title: 'Network Monitor',
+        subtitle: 'Monitor network and request queue',
+        icon: Icons.network_check,
+        route: NetworkMonitor.routeName,
       ),
     ];
 

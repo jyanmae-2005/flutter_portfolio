@@ -4,22 +4,28 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_portfolio/main.dart';
 import 'package:flutter_portfolio/providers/app_provider.dart';
+import 'package:flutter_portfolio/providers/network_provider.dart';
 
 void main() {
   /// Helper: wraps the app in a ChangeNotifierProvider so tests can verify
   /// global state behavior.
   Future<AppProvider> pumpApp(
     WidgetTester tester, {
-    AppProvider? provider,
+    AppProvider? appProvider,
+    NetworkProvider? networkProvider,
   }) async {
-    final appProvider = provider ?? AppProvider();
+    final provider = appProvider ?? AppProvider();
+    final netProvider = networkProvider ?? NetworkProvider();
     await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: appProvider,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+          ChangeNotifierProvider.value(value: netProvider),
+        ],
         child: const MyApp(),
       ),
     );
-    return appProvider;
+    return provider;
   }
 
   testWidgets('Home Dashboard renders correctly', (WidgetTester tester) async {
@@ -34,6 +40,8 @@ void main() {
   testWidgets('Navigate to Activity Screen 1', (WidgetTester tester) async {
     await pumpApp(tester);
 
+    await tester.ensureVisible(find.text('Activity One'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Activity One'));
     await tester.pumpAndSettle();
 
@@ -44,6 +52,8 @@ void main() {
   testWidgets('Navigate to Activity Screen 2', (WidgetTester tester) async {
     await pumpApp(tester);
 
+    await tester.ensureVisible(find.text('Activity Two'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Activity Two'));
     await tester.pumpAndSettle();
 
@@ -55,6 +65,7 @@ void main() {
       (WidgetTester tester) async {
     await pumpApp(tester);
 
+    await tester.ensureVisible(find.text('Open Settings'));
     await tester.tap(find.text('Open Settings'));
     await tester.pumpAndSettle();
 
@@ -79,6 +90,7 @@ void main() {
     await pumpApp(tester);
 
     // Navigate to Settings
+    await tester.ensureVisible(find.text('Open Settings'));
     await tester.tap(find.text('Open Settings'));
     await tester.pumpAndSettle();
 
@@ -105,10 +117,14 @@ void main() {
   testWidgets('Global state provider updates across screens',
       (WidgetTester tester) async {
     final appProvider = AppProvider();
+    final networkProvider = NetworkProvider();
 
     await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: appProvider,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: appProvider),
+          ChangeNotifierProvider.value(value: networkProvider),
+        ],
         child: const MyApp(),
       ),
     );
@@ -119,5 +135,43 @@ void main() {
     await tester.pump();
 
     expect(find.text('Welcome, Global User!'), findsOneWidget);
+  });
+
+  testWidgets('Network Monitor screen shows network status',
+      (WidgetTester tester) async {
+    final networkProvider = NetworkProvider();
+    await pumpApp(
+      tester,
+      networkProvider: networkProvider,
+    );
+
+    await tester.ensureVisible(find.text('Network Monitor'));
+    await tester.tap(find.text('Network Monitor'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Network Monitor'), findsOneWidget);
+    expect(find.text('Request Queue'), findsOneWidget);
+    expect(find.text('Request Statistics'), findsOneWidget);
+    expect(find.text('Simulate Request'), findsOneWidget);
+    expect(find.text('Simulate Handover'), findsOneWidget);
+  });
+
+  testWidgets('Network request is queued when offline',
+      (WidgetTester tester) async {
+    final networkProvider = NetworkProvider();
+    await pumpApp(
+      tester,
+      networkProvider: networkProvider,
+    );
+
+    await tester.ensureVisible(find.text('Network Monitor'));
+    await tester.tap(find.text('Network Monitor'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Simulate Request'));
+    await tester.tap(find.text('Simulate Request'));
+    await tester.pumpAndSettle();
+
+    expect(networkProvider.queueLength, greaterThanOrEqualTo(0));
   });
 }
