@@ -113,13 +113,20 @@ class NetworkProvider with ChangeNotifier {
     if (_initialized) return;
     _initialized = true;
     _checkConnectivity();
-    _subscription = _connectivity.onConnectivityChanged.listen(_onConnectivityChanged);
+    _subscription = _connectivity.onConnectivityChanged.listen(
+      _onConnectivityChanged,
+      onError: (_) {},
+    );
   }
 
   Future<void> _checkConnectivity() async {
-    _setStatus(NetworkStatus.checking);
-    final results = await _connectivity.checkConnectivity();
-    _processConnectivity(results);
+    try {
+      _setStatus(NetworkStatus.checking);
+      final result = await _connectivity.checkConnectivity();
+      _processConnectivity(result);
+    } catch (_) {
+      _setStatus(NetworkStatus.unknown);
+    }
   }
 
   void _onConnectivityChanged(ConnectivityResult result) {
