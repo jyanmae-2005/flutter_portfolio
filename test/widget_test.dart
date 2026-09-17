@@ -7,8 +7,6 @@ import 'package:flutter_portfolio/providers/app_provider.dart';
 import 'package:flutter_portfolio/providers/network_provider.dart';
 
 void main() {
-  /// Helper: wraps the app in a ChangeNotifierProvider so tests can verify
-  /// global state behavior.
   Future<AppProvider> pumpApp(
     WidgetTester tester, {
     AppProvider? appProvider,
@@ -17,12 +15,15 @@ void main() {
     final provider = appProvider ?? AppProvider();
     final netProvider = networkProvider ?? NetworkProvider();
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: provider),
-          ChangeNotifierProvider.value(value: netProvider),
-        ],
-        child: const MyApp(),
+      MediaQuery(
+        data: const MediaQueryData(size: Size(1080, 1920)),
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: provider),
+            ChangeNotifierProvider.value(value: netProvider),
+          ],
+          child: const MyApp(),
+        ),
       ),
     );
     return provider;
@@ -34,14 +35,13 @@ void main() {
     expect(find.text('Home Dashboard'), findsOneWidget);
     expect(find.text('Activity One'), findsOneWidget);
     expect(find.text('Activity Two'), findsOneWidget);
+    expect(find.text('Network Monitor'), findsOneWidget);
     expect(find.text('Open Settings'), findsOneWidget);
   });
 
   testWidgets('Navigate to Activity Screen 1', (WidgetTester tester) async {
     await pumpApp(tester);
 
-    await tester.ensureVisible(find.text('Activity One'));
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Activity One'));
     await tester.pumpAndSettle();
 
@@ -52,8 +52,6 @@ void main() {
   testWidgets('Navigate to Activity Screen 2', (WidgetTester tester) async {
     await pumpApp(tester);
 
-    await tester.ensureVisible(find.text('Activity Two'));
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Activity Two'));
     await tester.pumpAndSettle();
 
@@ -65,7 +63,6 @@ void main() {
       (WidgetTester tester) async {
     await pumpApp(tester);
 
-    await tester.ensureVisible(find.text('Open Settings'));
     await tester.tap(find.text('Open Settings'));
     await tester.pumpAndSettle();
 
@@ -75,13 +72,11 @@ void main() {
     await tester.tap(find.byType(Switch));
     await tester.pumpAndSettle();
 
-    // Navigate back to Home Dashboard
     await tester.tap(
       find.widgetWithText(FloatingActionButton, 'Back to Dashboard').first,
     );
     await tester.pumpAndSettle();
 
-    // The theme chip on Home Dashboard should reflect dark mode
     expect(find.text('Dark'), findsOneWidget);
   });
 
@@ -89,28 +84,22 @@ void main() {
       (WidgetTester tester) async {
     await pumpApp(tester);
 
-    // Navigate to Settings
-    await tester.ensureVisible(find.text('Open Settings'));
     await tester.tap(find.text('Open Settings'));
     await tester.pumpAndSettle();
 
-    // Enter a new name
     await tester.enterText(
       find.widgetWithText(TextField, 'Display Name').first,
       'Portfolio User',
     );
 
-    // Save the name
     await tester.tap(find.text('Save Name'));
     await tester.pumpAndSettle();
 
-    // Navigate back to Home Dashboard
     await tester.tap(
       find.widgetWithText(FloatingActionButton, 'Back to Dashboard').first,
     );
     await tester.pumpAndSettle();
 
-    // The welcome message should show the new name
     expect(find.text('Welcome, Portfolio User!'), findsOneWidget);
   });
 
@@ -120,12 +109,15 @@ void main() {
     final networkProvider = NetworkProvider();
 
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: appProvider),
-          ChangeNotifierProvider.value(value: networkProvider),
-        ],
-        child: const MyApp(),
+      MediaQuery(
+        data: const MediaQueryData(size: Size(1080, 1920)),
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: appProvider),
+            ChangeNotifierProvider.value(value: networkProvider),
+          ],
+          child: const MyApp(),
+        ),
       ),
     );
 
@@ -145,7 +137,6 @@ void main() {
       networkProvider: networkProvider,
     );
 
-    await tester.ensureVisible(find.text('Network Monitor'));
     await tester.tap(find.text('Network Monitor'));
     await tester.pumpAndSettle();
 
@@ -164,11 +155,9 @@ void main() {
       networkProvider: networkProvider,
     );
 
-    await tester.ensureVisible(find.text('Network Monitor'));
     await tester.tap(find.text('Network Monitor'));
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('Simulate Request'));
     await tester.tap(find.text('Simulate Request'));
     await tester.pumpAndSettle();
 

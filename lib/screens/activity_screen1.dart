@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
+import '../utils/responsive.dart';
 import '../widgets/custom_button.dart';
 
 class ActivityScreen1 extends StatefulWidget {
@@ -34,7 +35,10 @@ class _ActivityScreen1State extends State<ActivityScreen1> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.symmetric(
+            horizontal: Responsive.horizontalPadding(context),
+            vertical: Responsive.padding(context),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

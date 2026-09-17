@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
+import '../utils/responsive.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/menu_card.dart';
 import 'activity_screen1.dart';
@@ -25,20 +26,34 @@ class HomeDashboard extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.horizontalPadding(context),
+              vertical: Responsive.padding(context),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeader(context, appProvider),
                 const SizedBox(height: 32),
-                Text(
-                  'Activities',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                  textAlign: TextAlign.center,
-                ),
+                if (!Responsive.isCompact(context))
+                  Align(
+                    alignment: Responsive.isExpanded(context)
+                        ? Alignment.centerLeft
+                        : Alignment.center,
+                    child: Text(
+                      'Activities',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  )
+                else
+                  Text(
+                    'Activities',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
                 const SizedBox(height: 16),
                 _buildMenuGrid(context),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.padding(context)),
                 CustomButton(
                   label: 'Open Settings',
                   icon: Icons.settings,
@@ -46,6 +61,7 @@ class HomeDashboard extends StatelessWidget {
                     Navigator.of(context).pushNamed(SettingsScreen.routeName);
                   },
                 ),
+                SizedBox(height: Responsive.padding(context) * 2),
               ],
             ),
           ),
@@ -55,7 +71,8 @@ class HomeDashboard extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context, AppProvider appProvider) {
-    final isWide = MediaQuery.of(context).size.width > 600;
+    final isCompact = Responsive.isCompact(context);
+    final isWide = !isCompact;
 
     return Row(
       mainAxisAlignment:
@@ -66,12 +83,18 @@ class HomeDashboard extends StatelessWidget {
             'Welcome, ${appProvider.userName}!',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: (Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.fontSize ??
+                      24) *
+                    Responsive.fontSizeMultiplier(context),
                 ),
             textAlign: isWide ? TextAlign.left : TextAlign.center,
           ),
         ),
-        const SizedBox(height: 16),
-        if (isWide) const SizedBox(width: 16),
+        if (isWide) SizedBox(height: Responsive.padding(context) * 1.5),
+        if (isWide) SizedBox(width: Responsive.padding(context)),
         Chip(
           avatar: CircleAvatar(
             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -108,20 +131,20 @@ class HomeDashboard extends StatelessWidget {
       ),
     ];
 
-    final isWide = MediaQuery.of(context).size.width > 800;
-    final crossAxisCount = isWide ? 3 : 2;
+    final crossAxisCount = Responsive.gridCrossAxisCount(context).toInt();
+    final aspectRatio = Responsive.cardAspectRatio(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: constraints.maxWidth < 600 ? 1.0 : 1.2,
-          ),
+           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: Responsive.padding(context),
+                mainAxisSpacing: Responsive.padding(context),
+                childAspectRatio: aspectRatio,
+              ),
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];

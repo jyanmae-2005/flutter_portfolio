@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
+import '../utils/responsive.dart';
 import '../widgets/custom_button.dart';
 
 class ActivityScreen2 extends StatefulWidget {
@@ -35,13 +36,13 @@ class _ActivityScreen2State extends State<ActivityScreen2> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final isWide = constraints.maxWidth > 600;
+            final isWide = constraints.maxWidth > Breakpoints.compact;
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(Responsive.padding(context)),
                   child: Text(
                     'User: ${appProvider.userName}',
                     style: Theme.of(context).textTheme.titleMedium,
@@ -49,11 +50,13 @@ class _ActivityScreen2State extends State<ActivityScreen2> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.horizontalPadding(context),
+                    ),
                     child: Card(
                       elevation: 4,
                       child: Padding(
-                        padding: const EdgeInsets.all(24),
+                        padding: EdgeInsets.all(Responsive.padding(context)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [

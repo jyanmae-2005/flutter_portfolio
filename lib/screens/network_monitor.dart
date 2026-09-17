@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/network_provider.dart';
+import '../utils/responsive.dart';
 
 class NetworkMonitor extends StatefulWidget {
   const NetworkMonitor({super.key});
@@ -30,15 +31,19 @@ class _NetworkMonitorState extends State<NetworkMonitor> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.horizontalPadding(context),
+              vertical: Responsive.padding(context),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildStatusCard(context),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.padding(context)),
                 _buildQueueCard(context),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.padding(context)),
                 _buildStatsCard(context),
+                SizedBox(height: Responsive.padding(context) * 2),
               ],
             ),
           ),
@@ -186,8 +191,8 @@ class _NetworkMonitorState extends State<NetworkMonitor> {
             ),
             const SizedBox(height: 16),
             Wrap(
-              spacing: 24,
-              runSpacing: 12,
+              spacing: Responsive.padding(context),
+              runSpacing: Responsive.padding(context) / 2,
               children: [
                 _buildStatItem(
                   context,
