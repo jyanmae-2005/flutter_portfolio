@@ -7,6 +7,7 @@ import '../widgets/menu_card.dart';
 import 'activity_screen1.dart';
 import 'activity_screen2.dart';
 import 'network_monitor.dart';
+import 'network_diagnostic_screen.dart';
 import 'settings_screen.dart';
 
 class HomeDashboard extends StatelessWidget {
@@ -128,6 +129,12 @@ class HomeDashboard extends StatelessWidget {
         subtitle: 'Monitor network and request queue',
         icon: Icons.network_check,
         route: NetworkMonitor.routeName,
+      ),
+      _MenuItemData(
+        title: 'Network Diagnostic',
+        subtitle: 'Measure speed and connection health',
+        icon: Icons.speed,
+        route: NetworkDiagnosticScreen.routeName,
       ),
     ];
 

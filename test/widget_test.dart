@@ -5,25 +5,28 @@ import 'package:provider/provider.dart';
 import 'package:flutter_portfolio/main.dart';
 import 'package:flutter_portfolio/providers/app_provider.dart';
 import 'package:flutter_portfolio/providers/network_provider.dart';
+import 'package:flutter_portfolio/providers/network_diagnostic_provider.dart';
 
 void main() {
   Future<AppProvider> pumpApp(
     WidgetTester tester, {
     AppProvider? appProvider,
     NetworkProvider? networkProvider,
+    NetworkDiagnosticProvider? diagnosticProvider,
   }) async {
+    await tester.binding.setSurfaceSize(const Size(1080, 1920));
     final provider = appProvider ?? AppProvider();
     final netProvider = networkProvider ?? NetworkProvider();
+    final diagProvider = diagnosticProvider ??
+        NetworkDiagnosticProvider(autoStartDiagnostics: false);
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(size: Size(1080, 1920)),
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(value: provider),
-            ChangeNotifierProvider.value(value: netProvider),
-          ],
-          child: const MyApp(),
-        ),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+          ChangeNotifierProvider.value(value: netProvider),
+          ChangeNotifierProvider.value(value: diagProvider),
+        ],
+        child: const MyApp(),
       ),
     );
     return provider;
@@ -36,6 +39,7 @@ void main() {
     expect(find.text('Activity One'), findsOneWidget);
     expect(find.text('Activity Two'), findsOneWidget);
     expect(find.text('Network Monitor'), findsOneWidget);
+    expect(find.text('Network Diagnostic'), findsOneWidget);
     expect(find.text('Open Settings'), findsOneWidget);
   });
 
@@ -108,16 +112,15 @@ void main() {
     final appProvider = AppProvider();
     final networkProvider = NetworkProvider();
 
-    await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(size: Size(1080, 1920)),
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(value: appProvider),
-            ChangeNotifierProvider.value(value: networkProvider),
-          ],
-          child: const MyApp(),
-        ),
+     await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: appProvider),
+          ChangeNotifierProvider.value(value: networkProvider),
+          ChangeNotifierProvider.value(
+              value: NetworkDiagnosticProvider(autoStartDiagnostics: false)),
+        ],
+        child: const MyApp(),
       ),
     );
 
@@ -162,5 +165,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(networkProvider.queueLength, greaterThanOrEqualTo(0));
+  });
+
+  testWidgets('Network Diagnostic Dashboard shows health status',
+      (WidgetTester tester) async {
+    final diagnosticProvider =
+        NetworkDiagnosticProvider(autoStartDiagnostics: false);
+    await pumpApp(
+      tester,
+      diagnosticProvider: diagnosticProvider,
+    );
+
+    await tester.tap(find.text('Network Diagnostic'));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Network Diagnostic'), findsOneWidget);
+    expect(find.text('Run Diagnostics'), findsOneWidget);
+    expect(find.text('Idle Ping'), findsWidgets);
   });
 }
