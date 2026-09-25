@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/app_provider.dart';
+import 'providers/mesh_chat_provider.dart';
 import 'providers/network_provider.dart';
 import 'providers/network_diagnostic_provider.dart';
 import 'screens/activity_screen1.dart';
 import 'screens/activity_screen2.dart';
 import 'screens/home_dashboard.dart';
+import 'screens/mesh_chat_screen.dart';
 import 'screens/network_monitor.dart';
 import 'screens/network_diagnostic_screen.dart';
 import 'screens/settings_screen.dart';
@@ -18,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => NetworkProvider()),
         ChangeNotifierProvider(create: (_) => NetworkDiagnosticProvider()),
+        ChangeNotifierProvider(create: (_) => MeshChatProvider()),
       ],
       child: const MyApp(),
     ),
@@ -68,6 +71,7 @@ class _MyAppState extends State<MyApp> {
         HomeDashboard.routeName: (context) => const HomeDashboard(),
         ActivityScreen1.routeName: (context) => const ActivityScreen1(),
         ActivityScreen2.routeName: (context) => const ActivityScreen2(),
+        MeshChatScreen.routeName: (context) => const MeshChatScreen(),
         NetworkMonitor.routeName: (context) => const NetworkMonitor(),
         NetworkDiagnosticScreen.routeName: (context) =>
             const NetworkDiagnosticScreen(),

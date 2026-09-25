@@ -6,6 +6,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/menu_card.dart';
 import 'activity_screen1.dart';
 import 'activity_screen2.dart';
+import 'mesh_chat_screen.dart';
 import 'network_monitor.dart';
 import 'network_diagnostic_screen.dart';
 import 'settings_screen.dart';
@@ -112,6 +113,12 @@ class HomeDashboard extends StatelessWidget {
 
   Widget _buildMenuGrid(BuildContext context) {
     final items = [
+      _MenuItemData(
+        title: 'Local Mesh Chat',
+        subtitle: 'Peer-to-peer offline messaging',
+        icon: Icons.bluetooth_connected,
+        route: MeshChatScreen.routeName,
+      ),
       _MenuItemData(
         title: 'Activity One',
         subtitle: 'Explore the first activity',

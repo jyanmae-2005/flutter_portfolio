@@ -37,6 +37,7 @@ dependencies:
   provider: ^6.1.5+1
   connectivity_plus: ^5.0.2
   http: ^1.2.0
+  nearby_connections: ^4.3.0
 
 dev_dependencies:
   flutter_test:

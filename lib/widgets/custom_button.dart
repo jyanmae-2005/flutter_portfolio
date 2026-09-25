@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String label;
   final IconData icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CustomButton({
     super.key,
     required this.label,
     required this.icon,
-    required this.onPressed,
+    this.onPressed,
   });
 
   @override
