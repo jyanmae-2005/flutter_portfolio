@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MeshMessage {
   final String id;
@@ -87,8 +88,33 @@ class MeshChatProvider extends ChangeNotifier {
       : _localName = localName ?? 'User-${DateTime.now().millisecondsSinceEpoch % 10000}',
         _localId = 'id-${DateTime.now().millisecondsSinceEpoch}';
 
+  /// Request required runtime permissions
+  Future<bool> requestPermissions() async {
+    final statuses = await [
+      Permission.locationWhenInUse,
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+    ].request();
+
+    for (final status in statuses.values) {
+      if (!status.isGranted) {
+        debugPrint('Permission denied: $status');
+        _connectionStatusController.add('Permission denied - cannot start chat');
+        notifyListeners();
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<void> initialize() async {
     if (_isInitialized) return;
+    final granted = await requestPermissions();
+    if (!granted) {
+      _isInitialized = false;
+      return;
+    }
     _isInitialized = true;
     notifyListeners();
   }

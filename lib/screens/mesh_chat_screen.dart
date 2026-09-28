@@ -39,8 +39,15 @@ class _MeshChatScreenState extends State<MeshChatScreen> {
         if (mounted) setState(() {});
       });
       provider.initialize().then((_) {
-        provider.startAdvertising();
-        provider.startDiscovery();
+        if (provider.isInitialized) {
+          provider.startAdvertising();
+          provider.startDiscovery();
+        } else {
+          if (mounted) {
+            setState(() => _connectionStatus = 'Permissions required. '
+                'Enable Bluetooth and Location in app settings.');
+          }
+        }
       }).catchError((e) {
         if (mounted) {
           setState(() => _connectionStatus = 'Init failed: $e');
